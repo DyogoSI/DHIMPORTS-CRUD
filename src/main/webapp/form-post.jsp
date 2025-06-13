@@ -1,54 +1,70 @@
-<jsp:directive.page contentType="text/html; charset=UTF-8" />
-<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="contextPath" value="${pageContext.request.contextPath}" />
 
 <!DOCTYPE html>
-<html lang="pt-br">
-	<head>
-		<%@include file="base-head.jsp"%>
-	</head>
-	<body>
-		<%@include file="nav-menu.jsp"%>
-			
-		<div id="container" class="container-fluid">
-			<h3 class="page-header">Adicionar Post</h3>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Formulário de Post</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${contextPath}/css/style.css">
+</head>
+<body>
 
-			<form action="${pageContext.request.contextPath}/post/${action}" method="POST">
-				<input type="hidden" value="${post.getId()}" name="postId">
-				<div class="row">
-					<div class="form-group col-md-6">
-					<label for="content">Conteúdo</label>
-						<input type="text" class="form-control" id="content" name="content" 
-							   autofocus="autofocus" placeholder="Conteúdo do post" 
-							   required oninvalid="this.setCustomValidity('Por favor, informe o conteúdo do post.')"
-							   oninput="setCustomValidity('')"
-							   value="${post.getContent()}">
-					</div>
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="${contextPath}/posts">DH Imports</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="${contextPath}/posts">Posts</a></li>
+                <li><a href="${contextPath}/cars">Carros</a></li>
+                <li><a href="${contextPath}/companies">Empresas</a></li>
+                <li><a href="${contextPath}/users">Usuários</a></li>
+            </ul>
+             <ul class="nav navbar-nav navbar-right">
+                <li><a href="${contextPath}/logout"><span class="glyphicon glyphicon-log-out"></span> Sair</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
-					<div class="form-group col-md-6">
-						<label for="user">Usuário</label>
-						<select id="user" class="form-control selectpicker" name="user" 
-							    required oninvalid="this.setCustomValidity('Por favor, informe o usuário.')"
-							    oninput="setCustomValidity('')">
-						  <option value="" disabled ${not empty post ? "" : "selected"}>Selecione um usuário</option>
-						  <c:forEach var="user" items="${users}">
-						  	<option value="${user.getId()}"  ${post.getUser().getId() == user.getId() ? "selected" : ""}>
-						  		${user.getName()}
-						  	</option>	
-						  </c:forEach>
-						</select>
-					</div>
-				</div>
-				<hr />
-				<div id="actions" class="row pull-right">
-					<div class="col-md-12">
-						<a href="${pageContext.request.contextPath}/posts" class="btn btn-default">Cancelar</a>
-						<button type="submit" class="btn btn-primary">${not empty post ? "Alterar Post" : "Criar Post"}</button>
-					</div>
-				</div>
-			</form>
-		</div>
+<div class="container">
+    <div class="card">
+        <div class="header">
+            <h2><c:out value="${action == 'insert' ? 'Adicionar Novo' : 'Editar'}"/> Post</h2>
+        </div>
+        
+        <form action="${contextPath}/post/${action}" method="POST">
+            <c:if test="${action == 'update'}">
+                <input type="hidden" name="postId" value="${post.id}">
+            </c:if>
 
-		<script src="js/jquery.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
-	</body>
+            <div class="form-group">
+                <label for="user">Usuário:</label>
+                <select class="form-control" id="user" name="user" required>
+                    <option value="">Selecione um usuário</option>
+                    <c:forEach var="user" items="${users}">
+                        <option value="${user.id}" ${post.user.id == user.id ? 'selected' : ''}>
+                            <c:out value="${user.name}"/>
+                        </option>
+                    </c:forEach>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="content">Conteúdo:</label>
+                <textarea class="form-control" id="content" name="content" rows="5" required>${post.content}</textarea>
+            </div>
+            <hr>
+            <div class="text-right">
+                <a href="${contextPath}/posts" class="btn btn-default">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
 </html>

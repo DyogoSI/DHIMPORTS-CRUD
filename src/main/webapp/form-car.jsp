@@ -1,52 +1,82 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="contextPath" value="${pageContext.request.contextPath}" />
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Formulário de Carro</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${contextPath}/css/style.css">
 </head>
-<body class="bg-light">
-<div class="container mt-5">
-    <h2>${action == 'update' ? 'Editar Carro' : 'Cadastrar Carro'}</h2>
-    <form method="post" action="car/${action}">
-        <c:if test="${car != null}">
-            <input type="hidden" name="carId" value="${car.id}" />
-        </c:if>
+<body>
 
-        <div class="mb-3">
-            <label class="form-label">Modelo:</label>
-            <input type="text" class="form-control" name="model" value="${car.model}" required />
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="${contextPath}/posts">DH Imports</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="${contextPath}/posts">Posts</a></li>
+                <li class="active"><a href="${contextPath}/cars">Carros</a></li>
+                <li><a href="${contextPath}/companies">Empresas</a></li>
+                <li><a href="${contextPath}/users">Usuários</a></li>
+            </ul>
+             <ul class="nav navbar-nav navbar-right">
+                <li><a href="${contextPath}/logout"><span class="glyphicon glyphicon-log-out"></span> Sair</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="card">
+        <div class="header">
+            <h2><c:out value="${action == 'insert' ? 'Adicionar Novo' : 'Editar'}"/> Carro</h2>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Ano:</label>
-            <input type="number" class="form-control" name="year" value="${car.year}" required />
-        </div>
+        <form action="${contextPath}/car/${action}" method="POST">
+            <c:if test="${action == 'update'}">
+                <input type="hidden" name="carId" value="${car.id}">
+            </c:if>
 
-        <div class="mb-3">
-            <label class="form-label">Preço:</label>
-            <input type="number" step="0.01" class="form-control" name="price" value="${car.price}" required />
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Cor:</label>
-            <input type="text" class="form-control" name="color" value="${car.color}" required />
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Empresa:</label>
-            <select name="company" class="form-select" required>
-                <c:forEach var="c" items="${companies}">
-                    <option value="${c.id}" ${car.company.id == c.id ? 'selected' : ''}>${c.name}</option>
-                </c:forEach>
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-success">Salvar</button>
-        <a href="cars" class="btn btn-secondary">Cancelar</a>
-    </form>
+            <div class="form-group">
+                <label for="model">Modelo:</label>
+                <input type="text" class="form-control" id="model" name="model" value="${car.model}" required>
+            </div>
+            <div class="form-group">
+                <label for="year">Ano:</label>
+                <input type="number" class="form-control" id="year" name="year" value="${car.year}" required>
+            </div>
+            <div class="form-group">
+                <label for="price">Preço:</label>
+                <input type="text" class="form-control" id="price" name="price" value="${car.price}" required>
+            </div>
+             <div class="form-group">
+                <label for="color">Cor:</label>
+                <input type="text" class="form-control" id="color" name="color" value="${car.color}" required>
+            </div>
+            <div class="form-group">
+                <label for="company">Marca (Empresa):</label>
+                <select class="form-control" id="company" name="company" required>
+                    <option value="">Selecione a marca</option>
+                    <c:forEach var="company" items="${companies}">
+                        <option value="${company.id}" ${car.company.id == company.id ? 'selected' : ''}>
+                            <c:out value="${company.name}"/>
+                        </option>
+                    </c:forEach>
+                </select>
+            </div>
+            <hr>
+            <div class="text-right">
+                <a href="${contextPath}/cars" class="btn btn-default">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+        </form>
+    </div>
 </div>
+
 </body>
 </html>

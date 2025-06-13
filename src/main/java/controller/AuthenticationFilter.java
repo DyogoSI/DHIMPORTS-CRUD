@@ -37,8 +37,7 @@ public class AuthenticationFilter implements Filter {
         // URLs que não exigem autenticação
         boolean isLoginRequest = requestURI.equals(contextPath + "/login");
         boolean isLogoutRequest = requestURI.equals(contextPath + "/logout");
-
-        // CORREÇÃO AQUI: Detecção mais robusta da página raiz
+        
         // Verifica se a requestURI é exatamente o contextPath OU o contextPath com uma barra no final
         boolean isRootPath = requestURI.equals(contextPath) || requestURI.equals(contextPath + "/");
 
@@ -46,18 +45,17 @@ public class AuthenticationFilter implements Filter {
                                    requestURI.startsWith(contextPath + "/js/") ||
                                    requestURI.startsWith(contextPath + "/images/");
 
-        // Se o usuário está logado OU a requisição é para login/logout/recurso público
         if (isLoggedIn || isLoginRequest || isLogoutRequest || isPublicResource) {
             // Se for a página raiz E o usuário NÃO estiver logado, redireciona para o login
             if (isRootPath && !isLoggedIn) {
                 httpResponse.sendRedirect(contextPath + "/login");
-                return; // Importante para parar o processamento aqui
+                return; 
             }
-            chain.doFilter(request, response); // Permite que a requisição continue
+            chain.doFilter(request, response); 
         } else {
             // Se não estiver logado e tentar acessar um recurso PROTEGIDO
             ControllerUtil.errorMessage(httpRequest, "Acesso negado. Por favor, faça login para acessar esta página.");
-            httpResponse.sendRedirect(contextPath + "/login"); // Redireciona para a página de login
+            httpResponse.sendRedirect(contextPath + "/login");
         }
     }
 

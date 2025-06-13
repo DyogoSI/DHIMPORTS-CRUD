@@ -1,39 +1,67 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="contextPath" value="${pageContext.request.contextPath}" />
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cadastro de Usu·rio</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Formul√°rio de Usu√°rio</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${contextPath}/css/style.css">
 </head>
-<body class="bg-light">
-<div class="container mt-5">
-    <h2>${action == 'update' ? 'Editar Usu·rio' : 'Cadastrar Usu·rio'}</h2>
-    <form method="post" action="user/${action}">
-        <c:if test="${user != null}">
-            <input type="hidden" name="userId" value="${user.id}" />
-        </c:if>
+<body>
 
-        <div class="mb-3">
-            <label>Nome:</label>
-            <input type="text" name="name" class="form-control" value="${user.name}" required />
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="${contextPath}/posts">DH Imports</a>
         </div>
-
-        <div class="mb-3">
-            <label>Sexo:</label>
-            <select name="gender" class="form-select" required>
-                <option value="M" ${user.gender == 'M' ? 'selected' : ''}>Masculino</option>
-                <option value="F" ${user.gender == 'F' ? 'selected' : ''}>Feminino</option>
-            </select>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="${contextPath}/posts">Posts</a></li>
+                <li><a href="${contextPath}/cars">Carros</a></li>
+                <li><a href="${contextPath}/companies">Empresas</a></li>
+                <li class="active"><a href="${contextPath}/users">Usu√°rios</a></li>
+            </ul>
+             <ul class="nav navbar-nav navbar-right">
+                <li><a href="${contextPath}/logout"><span class="glyphicon glyphicon-log-out"></span> Sair</a></li>
+            </ul>
         </div>
+    </div>
+</nav>
 
-        <div class="mb-3">
-            <label>Email:</label>
-            <input type="email" name="mail" class="form-control" value="${user.email}" required />
+<div class="container">
+    <div class="card">
+        <div class="header">
+            <h2><c:out value="${action == 'insert' ? 'Adicionar Novo' : 'Editar'}"/> Usu√°rio</h2>
         </div>
+        
+        <form action="${contextPath}/user/${action}" method="POST">
+            <c:if test="${action == 'update'}">
+                <input type="hidden" name="userId" value="${user.id}">
+            </c:if>
 
-        <button type="submit" class="btn btn-success">Salvar</button>
-        <a href="users" class="btn btn-secondary">Cancelar</a>
-    </form>
+            <div class="form-group">
+                <label for="name">Nome:</label>
+                <input type="text" class="form-control" id="name" name="name" value="${user.name}" required>
+            </div>
+             <div class="form-group">
+                <label for="gender">G√™nero:</label>
+                <input type="text" class="form-control" id="gender" name="gender" value="${user.gender}" required>
+            </div>
+            <div class="form-group">
+                <label for="mail">Email:</label>
+                <input type="email" class="form-control" id="mail" name="mail" value="${user.email}" required>
+            </div>
+            <hr>
+            <div class="text-right">
+                <a href="${contextPath}/users" class="btn btn-default">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+        </form>
+    </div>
 </div>
+
 </body>
 </html>

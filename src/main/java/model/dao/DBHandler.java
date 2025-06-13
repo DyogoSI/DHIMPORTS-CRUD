@@ -9,7 +9,7 @@ import java.util.Date;
 
 import model.ModelException;
 
-public class DBHandler {
+public class DBHandler implements AutoCloseable { // CORREÇÃO: Implementa AutoCloseable
     private Connection connection = null;
     private PreparedStatement preparedStatement = null;
     private Statement statement = null;
@@ -19,88 +19,69 @@ public class DBHandler {
         connection = MySQLConnectionFactory.getConnection();
     }
 
-    public void prepareStatement(String sqlInsert) throws ModelException {
+    public void prepareStatement(String sql) throws ModelException {
         try {
-            preparedStatement = connection.prepareStatement(sqlInsert);
+            preparedStatement = connection.prepareStatement(sql);
         } catch (SQLException e) {
-            close();
             throw new ModelException("Erro ao preparar a SQL", e);
         }
     }
 
     public void setString(int i, String value) throws ModelException {
         validatePreparedStatement();
-        
         try {
             preparedStatement.setString(i, value);
         } catch (SQLException e) {
-            close();
             throw new ModelException("Erro ao atribuir string", e);
         }
     }
     
     public void setNullDate(int i) throws ModelException {
         validatePreparedStatement();
-        
         try {
             preparedStatement.setNull(i, java.sql.Types.DATE);
         } catch (SQLException e) {
-            close();
             throw new ModelException("Erro ao atribuir null", e);
         }
     }
     
     public void setDate(int i, Date value) throws ModelException {
         validatePreparedStatement();
-        
         try {
-            java.sql.Date date = new java.sql.Date(value.getTime());
-            preparedStatement.setDate(i, date);
+            if (value == null) {
+                setNullDate(i);
+            } else {
+                preparedStatement.setDate(i, new java.sql.Date(value.getTime()));
+            }
         } catch (SQLException e) {
-            close();
             throw new ModelException("Erro ao atribuir data", e);
         }
     }
 
     public void setInt(int i, int value) throws ModelException {
         validatePreparedStatement();
-        
         try {
             preparedStatement.setInt(i, value);
         } catch (SQLException e) {
-            close();
             throw new ModelException("Erro ao atribuir inteiro", e);
         }
     }
-
+    
     public void setDouble(int i, double value) throws ModelException {
         validatePreparedStatement();
         try {
             preparedStatement.setDouble(i, value);
         } catch (SQLException e) {
-            close();
             throw new ModelException("Erro ao atribuir double", e);
         }
     }
 
-    public double getDouble(String column) throws ModelException {
-        try {
-            return resultSet.getDouble(column);
-        } catch (SQLException e) {
-            close();
-            throw new ModelException("Erro ao chamar getDouble", e);
-        }
-    }
-
-    public int executeUpdate() throws ModelException  {
+    public int executeUpdate() throws ModelException {
         validatePreparedStatement();
-        
         try {
             return preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new ModelException("Erro ao executar SQL", e);
-        } finally{
-            close();
         }
     }
     
@@ -114,33 +95,27 @@ public class DBHandler {
     
     public void executeQuery(String sql) throws ModelException {
         validateStatement();
-        
         try {
             resultSet = statement.executeQuery(sql);
         } catch (SQLException e) {
-            close();
             throw new ModelException("Erro ao executar SQL", e);
         }
     }
     
     public void executeQuery() throws ModelException {
         validatePreparedStatement();
-        
         try {
             resultSet = preparedStatement.executeQuery();
         } catch (SQLException e) {
-            close();
             throw new ModelException("Erro ao executar SQL", e);
         }
     }
     
     public boolean next() throws ModelException {
         validateResultSet();
-        
         try {
             return resultSet.next();
         } catch (SQLException e) {
-            close();
             throw new ModelException("Erro ao chamar próximo registro", e);
         }
     }
@@ -149,7 +124,6 @@ public class DBHandler {
         try {
             return resultSet.getInt(column);
         }  catch (SQLException e) {
-            close();
             throw new ModelException("Erro ao chamar getInt", e);
         }
     }
@@ -158,7 +132,6 @@ public class DBHandler {
         try {
             return resultSet.getString(column);
         } catch (SQLException e) {
-            close();
             throw new ModelException("Erro ao chamar getString", e);
         }
     }
@@ -167,26 +140,27 @@ public class DBHandler {
         try {
             return resultSet.getDate(column);
         } catch (SQLException e) {
-            close();
             throw new ModelException("Erro ao chamar getDate", e);
         }
     }
     
+    public double getDouble(String column) throws ModelException {
+        try {
+            return resultSet.getDouble(column);
+        } catch (SQLException e) {
+            throw new ModelException("Erro ao chamar getDouble", e);
+        }
+    }
+    
+    @Override
     public void close() throws ModelException {
         try {
-            if (preparedStatement != null)
-                preparedStatement.close();
-            
-            if (statement != null)
-                statement.close();
-            
-            if (resultSet != null)
-                resultSet.close();
-            
-            if (connection != null && !connection.isClosed())
-                connection.close();
+            if (preparedStatement != null) preparedStatement.close();
+            if (statement != null) statement.close();
+            if (resultSet != null) resultSet.close();
+            if (connection != null && !connection.isClosed()) connection.close();
         } catch (SQLException e) {
-            throw new ModelException("Erro ao fechar recursos", e);
+            throw new ModelException("Erro ao fechar recursos do banco de dados", e);
         }
     }
     

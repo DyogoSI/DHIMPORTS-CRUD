@@ -1,38 +1,105 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="contextPath" value="${pageContext.request.contextPath}" />
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Usu·rios</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Gerenciamento de Usu√°rios - DH Imports</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${contextPath}/css/style.css">
 </head>
-<body class="bg-light">
-<div class="container mt-4">
-    <h2>Usu·rios</h2>
-    <a href="user/form" class="btn btn-primary mb-3">Novo Usu·rio</a>
+<body>
 
-    <c:if test="${not empty message}">
-        <div class="alert alert-${alertType == 1 ? 'success' : 'danger'}">${message}</div>
-    </c:if>
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="${contextPath}/posts">DH Imports</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="${contextPath}/posts">Posts</a></li>
+                <li><a href="${contextPath}/cars">Carros</a></li>
+                <li><a href="${contextPath}/companies">Empresas</a></li>
+                <li class="active"><a href="${contextPath}/users">Usu√°rios</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="${contextPath}/logout"><span class="glyphicon glyphicon-log-out"></span> Sair</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
-    <table class="table table-bordered">
-        <thead class="table-dark">
-            <tr><th>ID</th><th>Nome</th><th>Sexo</th><th>Email</th><th>AÁıes</th></tr>
-        </thead>
-        <tbody>
-        <c:forEach var="user" items="${users}">
-            <tr>
-                <td>${user.id}</td>
-                <td>${user.name}</td>
-                <td>${user.gender}</td>
-                <td>${user.email}</td>
-                <td>
-                    <a href="user/update?userId=${user.id}" class="btn btn-warning btn-sm">Editar</a>
-                    <a href="user/delete?id=${user.id}" class="btn btn-danger btn-sm" onclick="return confirm('Deseja excluir?')">Excluir</a>
-                </td>
-            </tr>
-        </c:forEach>
-        </tbody>
-    </table>
+<div class="container">
+    <div class="card">
+        <div class="header">
+            <h2>Gerenciamento de Usu√°rios</h2>
+            <a href="${contextPath}/user/form" class="btn btn-primary">Adicionar Novo Usu√°rio</a>
+        </div>
+
+        <c:if test="${not empty message}">
+            <div class="alert ${alertType == 1 ? 'alert-success' : 'alert-danger'}">${message}</div>
+        </c:if>
+
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>G√™nero</th>
+                    <th>Email</th>
+                    <th class="text-right">A√ß√µes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <c:forEach var="user" items="${users}">
+                    <tr>
+                        <td>${user.id}</td>
+                        <td><c:out value="${user.name}"/></td>
+                        <td><c:out value="${user.gender}"/></td>
+                        <td><c:out value="${user.email}"/></td>
+                        <td class="text-right">
+                            <a href="${contextPath}/user/update?userId=${user.id}" class="btn btn-info btn-sm">Editar</a>
+                            <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete-modal"
+                                    data-id="${user.id}"
+                                    data-entity-name="user"
+                                    data-description="${user.name}">
+                                Excluir
+                            </button>
+                        </td>
+                    </tr>
+                </c:forEach>
+                 <c:if test="${empty users}">
+                    <tr>
+                        <td colspan="5" class="text-center">Nenhum usu√°rio encontrado.</td>
+                    </tr>
+                </c:if>
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<jsp:include page="modal.html" />
+
+<script src="${contextPath}/js/jquery.min.js"></script>
+<script src="${contextPath}/js/bootstrap.min.js"></script>
+<script>
+$('#delete-modal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var id = button.data('id');
+    var description = button.data('description');
+    var entityName = button.data('entity-name');
+
+    var modal = $(this);
+    modal.find('.modal-body #hiddenValue').text(description);
+    
+    var form = modal.find('#form');
+    form.attr('action', '${contextPath}/' + entityName + '/delete');
+    
+    modal.find('#id').val(id);
+});
+</script>
+
 </body>
 </html>
