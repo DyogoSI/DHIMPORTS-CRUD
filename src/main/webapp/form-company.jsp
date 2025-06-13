@@ -1,100 +1,50 @@
-<jsp:directive.page contentType="text/html; charset=UTF-8" />
-<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
-	<%@include file="base-head.jsp"%>
+    <title>Cadastro de Empresa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-	<%@include file="nav-menu.jsp"%>
-	
-	<div id="container" class="container-fluid">
-		<h3 class="page-header">${not empty company ? 'Atualizar' : 'Adicionar'} Empresa</h3>
-		
-		<form action="${pageContext.request.contextPath}/company/${action}" 
-			method="POST">
-			
-			<input type="hidden" value="${company.getId()}" name="companyId">
-			
-			<div class="row">
-				<div class="form-group col-md-6">
-					<label for="name">Nome</label>
-					<input type="text" class="form-control" id="name" name="name" 
-						   autofocus="autofocus" placeholder="Nome Empresa" 
-						   required 
-						   oninvalid="this.setCustomValidity('Por favor, informe o nome da empresa.')"
-						   oninput="setCustomValidity('')"
-						   value="${company.getName()}" />
-				</div>
-				
-				<div class="form-group col-md-6">
-					<label for="role">Cargo</label>
-					<input type="text" class="form-control" id="role" name="role" 
-						   autofocus="autofocus" placeholder="Cargo ocupado" 
-						   required 
-						   oninvalid="this.setCustomValidity('Por favor, informe o cargo.')"
-						   oninput="setCustomValidity('')" 
-						   value="${company.getRole()}"/>
-				</div>				
-			</div>
-			
-			<div class="row">
-				<div class="form-group col-md-4">
-					<label for="start">Data in√≠cio</label>
-					<input type="date" class="form-control" id="start" name="start" 
-						   autofocus="autofocus" placeholder="Data de in√≠cio" 
-						   required 
-						   oninvalid="this.setCustomValidity('Por favor, informe a data de in√≠cio.')"
-						   oninput="setCustomValidity('')"
-						   value="${company.getStart()}" />
-				</div>
-				
-				<div class="form-group col-md-4">
-					<label for="end">Data sa√≠da</label>
-					<input type="date" class="form-control" id="end" name="end" 
-						   autofocus="autofocus" placeholder="Data de sa√≠da"				    
-						   oninvalid="this.setCustomValidity('Por favor, informe a data de sa√≠da')"
-						   oninput="setCustomValidity('')"
-						   value="${company.getEnd()}"/>
-				</div>
-				
-				<div class="form-group col-md-4">
-					<label for="user">Usu√°rio</label>
-					<select id="user" class="form-control selectpicker" name="user" 
-						    required oninvalid="this.setCustomValidity('Por favor, informe o usu√°rio.')"
-						    oninput="setCustomValidity('')">
-					  
-					  <option value="" ${not empty company ? "" : 'selected'} >
-					  	Selecione um usu√°rio
-					  </option>
-					  
-					  <c:forEach var="user" items="${users}">
-					  	<option value="${user.getId()}" 
-					  		${company.getUser().getId() == user.getId() ? 
-					  			'selected' : ''}
-					  	>
-					  		${user.getName()}
-					  	</option>	
-					  </c:forEach>
-					</select>
-				</div>
-			</div>
-			
-			<hr />
-			<div id="actions" class="row pull-right">
-				<div class="col-md-12">
-					
-					<a href="${pageContext.request.contextPath}/companies" 
-					   class="btn btn-default">Cancelar</a>
-					
-					<button type="submit" 
-						    class="btn btn-primary">${not empty company ? 'Atulizar' : 'Cadastrar' } Empresa</button>
-				</div>
-			</div>
-		</form>
-		
-	</div>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2>${action == 'update' ? 'Editar Empresa' : 'Cadastrar Empresa'}</h2>
+    <form method="post" action="company/${action}">
+        <c:if test="${company != null}">
+            <input type="hidden" name="companyId" value="${company.id}" />
+        </c:if>
 
+        <div class="mb-3">
+            <label>Nome:</label>
+            <input type="text" name="name" class="form-control" value="${company.name}" required />
+        </div>
+
+        <div class="mb-3">
+            <label>FunÁ„o:</label>
+            <input type="text" name="role" class="form-control" value="${company.role}" required />
+        </div>
+
+        <div class="mb-3">
+            <label>Data de InÌcio:</label>
+            <input type="date" name="start" class="form-control" value="${company.start}" required />
+        </div>
+
+        <div class="mb-3">
+            <label>Data de Fim:</label>
+            <input type="date" name="end" class="form-control" value="${company.end}" />
+        </div>
+
+        <div class="mb-3">
+            <label>Usu·rio Respons·vel:</label>
+            <select name="user" class="form-select" required>
+                <c:forEach var="user" items="${users}">
+                    <option value="${user.id}" ${company.user.id == user.id ? 'selected' : ''}>${user.name}</option>
+                </c:forEach>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success">Salvar</button>
+        <a href="companies" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
 </body>
 </html>

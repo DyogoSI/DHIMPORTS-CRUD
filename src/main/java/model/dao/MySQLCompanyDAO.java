@@ -105,6 +105,7 @@ public class MySQLCompanyDAO implements CompanyDAO {
 			companies.add(company);
 		}
 		
+		db.close(); // Garante o fechamento da conexão após o uso do ResultSet
 		return companies;
 	}
 
@@ -133,6 +134,7 @@ public class MySQLCompanyDAO implements CompanyDAO {
 			break;
 		}
 		
+		db.close(); // Garante o fechamento da conexão
 		return c;
 	}
 }

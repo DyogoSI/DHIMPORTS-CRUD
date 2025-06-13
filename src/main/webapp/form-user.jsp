@@ -1,59 +1,39 @@
-<jsp:directive.page contentType="text/html; charset=UTF-8" />
-<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
-<html lang="pt-br">
-	<head>
-		<%@include file="base-head.jsp"%>
-	</head>
-	<body>
-		<%@include file="nav-menu.jsp"%>
-			
-		<div id="container" class="container-fluid">
-			<h3 class="page-header">Adicionar Usuário</h3>
+<html>
+<head>
+    <title>Cadastro de Usu�rio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2>${action == 'update' ? 'Editar Usu�rio' : 'Cadastrar Usu�rio'}</h2>
+    <form method="post" action="user/${action}">
+        <c:if test="${user != null}">
+            <input type="hidden" name="userId" value="${user.id}" />
+        </c:if>
 
-			<form action="${pageContext.request.contextPath}/user/${action}" method="POST">
-				<input type="hidden" value="${user.getId()}" name="userId">
-				<div class="row">
-					<div class="form-group col-md-4">
-					<label for="name">Nome</label>
-						<input type="text" class="form-control" id="name" name="name" 
-							   autofocus="autofocus" placeholder="Nome do usuário" 
-							   required oninvalid="this.setCustomValidity('Por favor, informe o nome do usuário.')"
-							   oninput="setCustomValidity('')"
-							   value="${user.getName()}">
-					</div>
+        <div class="mb-3">
+            <label>Nome:</label>
+            <input type="text" name="name" class="form-control" value="${user.name}" required />
+        </div>
 
-					<div class="form-group col-md-4">
-						<label for="gender">Sexo</label>
-						<select id="gender" class="form-control selectpicker" name="gender" 
-							    required oninvalid="this.setCustomValidity('Por favor, informe o sexo')"
-							    oninput="setCustomValidity('')">
-					      <option value="" disabled ${not empty user ? "" : "selected"}>Selecione o sexo</option>
-						  <option value="F" ${user.getGender() == 'F' ? "selected" : ""}>Feminino</option>
-						  <option value="M" ${user.getGender() == 'M' ? "selected" : ""}>Masculino</option>
-						</select>
-					</div>
-					
-					<div class="form-group col-md-4">
-					<label for="mail">E-mail</label>
-						<input type="email" class="form-control" id="mail" name="mail" 
-							   autofocus="autofocus" placeholder="E-mail do usuário" 
-							   required oninvalid="this.setCustomValidity('Por favor, informe o email do usuário.')"
-							   oninput="setCustomValidity('')"
-							   value="${user.getEmail()}">
-					</div>
-				</div>
-				<hr />
-				<div id="actions" class="row pull-right">
-					<div class="col-md-12">
-						<a href="${pageContext.request.contextPath}/users" class="btn btn-default">Cancelar</a>
-						<button type="submit" class="btn btn-primary">${not empty user ? "Alterar Usuário" : "Cadastrar Usuário"}</button>
-					</div>
-				</div>
-			</form>
-		</div>
+        <div class="mb-3">
+            <label>Sexo:</label>
+            <select name="gender" class="form-select" required>
+                <option value="M" ${user.gender == 'M' ? 'selected' : ''}>Masculino</option>
+                <option value="F" ${user.gender == 'F' ? 'selected' : ''}>Feminino</option>
+            </select>
+        </div>
 
-		<script src="js/jquery.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
-	</body>
+        <div class="mb-3">
+            <label>Email:</label>
+            <input type="email" name="mail" class="form-control" value="${user.email}" required />
+        </div>
+
+        <button type="submit" class="btn btn-success">Salvar</button>
+        <a href="users" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+</body>
 </html>
