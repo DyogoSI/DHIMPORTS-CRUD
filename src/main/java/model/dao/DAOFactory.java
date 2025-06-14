@@ -5,18 +5,17 @@ import java.util.Map;
 
 public class DAOFactory {
 
-	private static Map<Class<?>, Object> listDAOsInterfaces = new HashMap<Class<?>, Object>();
+    private static final Map<Class<?>, Object> daos = new HashMap<>();
 
-	static {
-		listDAOsInterfaces.put(PostDAO.class, new MySQLPostDAO());
-		listDAOsInterfaces.put(UserDAO.class, new MySQLUserDAO());
-		listDAOsInterfaces.put(CompanyDAO.class, new MySQLCompanyDAO());
-		listDAOsInterfaces.put(CarDAO.class, new MySQLCarDAO()); // ADICIONADO: CarDAO
-		listDAOsInterfaces.put(UserLoginDAO.class, new MySQLUserLoginDAO()); // ADICIONADO: UserLoginDAO
-	}
+    static {
+        
+        daos.put(UsuarioDAO.class, new MySQLUsuarioDAO());
+        daos.put(MarcaDAO.class, new MySQLMarcaDAO());
+        daos.put(CarroDAO.class, new MySQLCarroDAO());
+    }
 
-	@SuppressWarnings("unchecked")
-	public static <DAOInterface> DAOInterface createDAO(Class<?> entity){
-		return (DAOInterface) listDAOsInterfaces.get(entity);
-	}
+    @SuppressWarnings("unchecked")
+    public static <T> T createDAO(Class<T> daoInterface) {
+        return (T) daos.get(daoInterface);
+    }
 }

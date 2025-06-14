@@ -2,7 +2,7 @@ package model.dao;
 
 import model.ModelException;
 import model.UserLogin;
-// A importação de java.sql.SQLException não é mais estritamente necessária aqui se você só capturar ModelException.
+
 
 public class MySQLUserLoginDAO implements UserLoginDAO {
 
@@ -16,18 +16,18 @@ public class MySQLUserLoginDAO implements UserLoginDAO {
             db.prepareStatement(sql);
             db.setString(1, username);
             db.setString(2, password);
-            db.executeQuery(); // Este método no DBHandler lança ModelException
+            db.executeQuery(); 
 
-            if (db.next()) { // Este método no DBHandler lança ModelException
-                userLogin = new UserLogin(db.getInt("id")); // getInt no DBHandler lança ModelException
-                userLogin.setUsername(db.getString("username")); // getString no DBHandler lança ModelException
-                userLogin.setPassword(db.getString("password")); // getString no DBHandler lança ModelException
-                userLogin.setRole(db.getString("role")); // getString no DBHandler lança ModelException
+            if (db.next()) { 
+                userLogin = new UserLogin(db.getInt("id")); 
+                userLogin.setUsername(db.getString("username")); 
+                userLogin.setPassword(db.getString("password")); 
+                userLogin.setRole(db.getString("role")); 
             }
-        } catch (ModelException e) { // <-- CORREÇÃO: Capturando ModelException
+        } catch (ModelException e) { 
             throw new ModelException("Erro ao buscar credenciais de login: " + e.getMessage(), e);
         } finally {
-            db.close(); // <-- CORREÇÃO: O método close() agora é público e pode ser chamado aqui.
+            db.close(); 
         }
         return userLogin;
     }

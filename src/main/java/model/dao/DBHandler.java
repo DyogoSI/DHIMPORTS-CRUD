@@ -9,7 +9,7 @@ import java.util.Date;
 
 import model.ModelException;
 
-public class DBHandler implements AutoCloseable { // CORREÇÃO: Implementa AutoCloseable
+public class DBHandler implements AutoCloseable { 
     private Connection connection = null;
     private PreparedStatement preparedStatement = null;
     private Statement statement = null;
